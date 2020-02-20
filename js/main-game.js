@@ -50,6 +50,11 @@ var enemyMovements = [
   'sin_down',
 ];
 
+var bgMusic = undefined;
+var shootFX = undefined;
+var crash1FX = undefined;
+var crash2FX = undefined;
+
 function create() {
   // set game world
   // this.world.setBounds(0, 0, 360, 640);
@@ -112,6 +117,12 @@ function create() {
     repeat: -1
   });
 
+  // set music and FX
+  bgMusic = this.sound.add('music');
+  crash1FX = this.sound.add('crash1');
+  crash2FX = this.sound.add('crash2');
+  shootFX = this.sound.add('fire');
+
   // set start screen
   initStartScreen(this);
 
@@ -139,6 +150,9 @@ function startGame() {
   canScrollMap = true;
   startButton.destroy();
   startText.destroy();
+  bgMusic.play({
+    loop: true,
+  });
 }
 
 function update(timestep, dt) {
@@ -228,12 +242,14 @@ function overlapPlayerEnemies(player, enemy) {
   gameState = 'gameover';
   enemy.destroy();
   gameOverText.setText('Game Over' + '\n\n' + 'Reload Screen to start again');
+  crash1FX.play();
 }
 
 function overlapPlayerBulletsEnemies(playerBulllet, enemy) {
   enemy.destroy();
   playerBulllet.destroy();
   score += 50;
+  crash2FX.play();
 }
 
 function overlapPlayerEnemyBullets(player, enemyBulllet) {
@@ -242,6 +258,7 @@ function overlapPlayerEnemyBullets(player, enemyBulllet) {
   gameState = 'gameover';
   gameOverText.setText('Game Over' + '\n\n' + 'Reload Screen to start again');
   enemyBulllet.destroy();
+  crash1FX.play();
 }
 
 function createRandomEnemies() {
@@ -267,6 +284,8 @@ function createPlayerBullet() {
   bullet.setVelocityY(-400);
 
   bullet.anims.play('bulletAnim1', true);
+
+  shootFX.play();
 }
 
 function createEnemyBullet(enemy) {
